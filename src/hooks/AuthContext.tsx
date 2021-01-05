@@ -13,6 +13,7 @@ interface AuthContextData {
     email: string;
   };
   login(credencials: LoginCredentials): Promise<void>;
+  logout(): void;
 }
 
 interface AuthState {
@@ -26,7 +27,7 @@ interface AuthState {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 const AuthProvider: React.FC = ({ children }) => {
-  const [data, setDate] = useState<AuthState>(() => {
+  const [data, setData] = useState<AuthState>(() => {
     const token = localStorage.getItem('@GoBarber:token');
     const user = localStorage.getItem('@GoBarber:user');
 
@@ -44,11 +45,18 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.setItem('@GoBarber:token', token);
     localStorage.setItem('@GoBarber:user', JSON.stringify(user));
 
-    setDate({ token, user });
+    setData({ token, user });
+  }, []);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('@GoBarber:token');
+    localStorage.removeItem('@GoBarber:user');
+
+    setData({} as AuthState);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user: data.user, login }}>
+    <AuthContext.Provider value={{ user: data.user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
