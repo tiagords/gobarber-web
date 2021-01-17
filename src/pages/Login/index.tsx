@@ -10,7 +10,8 @@ import logoImg from '../../assets/images/logo.svg';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import getValidationErrors from '../../utils/getValidationErrors';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/Auth';
+import { useToast } from '../../hooks/Toast';
 
 interface LoginFormData {
   email: string;
@@ -21,6 +22,7 @@ const Login: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { login } = useAuth();
+  const { addToast } = useToast();
 
   const handleSubmit = useCallback(
     async (data: LoginFormData) => {
@@ -38,13 +40,24 @@ const Login: React.FC = () => {
           abortEarly: false,
         });
 
-        login({ email: data.email, password: data.password });
+        await login({ email: data.email, password: data.password });
       } catch (error) {
-        const errors = getValidationErrors(error);
-        formRef.current?.setErrors(errors);
+        if (error instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(error);
+          formRef.current?.setErrors(errors);
+
+          return;
+        }
+
+        // Disparar Toast
+        addToast({
+          type: 'error',
+          title: 'Falha na autenticação',
+          description: 'Ops, houve um erro na autenticação',
+        });
       }
     },
-    [login],
+    [login, addToast],
   );
 
   return (
