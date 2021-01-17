@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
 
 import registerBackgroundImg from '../../assets/images/register-background.png';
@@ -10,12 +10,39 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
+  width: 100%;
+  max-width: 780px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  max-width: 780px;
+`;
+
+export const Background = styled.div`
+  flex: 1;
+  background: url(${registerBackgroundImg}) no-repeat center;
+  background-size: cover;
+`;
+
+const appearFromRight = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+export const AnimationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  animation: ${appearFromRight} 1s;
 
   form {
     margin: 80px;
@@ -51,21 +78,15 @@ export const Content = styled.div`
     text-decoration: none;
     font-size: 16px;
     text-align: center;
-    color: #f4ede8;
+    color: #ff9000;
     transition: background-color 0.2s;
 
     &:hover {
-      color: ${shade(0.2, '#F4EDE8')};
+      color: ${shade(0.2, '#ff9000')};
     }
 
     svg {
       margin-right: 16px;
     }
   }
-`;
-
-export const Background = styled.div`
-  flex: 1;
-  background: url(${registerBackgroundImg}) no-repeat center;
-  background-size: cover;
 `;
